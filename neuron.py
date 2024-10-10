@@ -1,10 +1,10 @@
-from typing import List
 from methods import *
 
 
 
 class Neuron:
     valor: float
+    y: float
 
     def __init__(self, valor = 0):
         self.valor = valor
@@ -15,6 +15,7 @@ class Neuron:
 
     def phi(self, method = step_function):
         self.y = method(self.valor)
+        return self.y
 
 
 if __name__ == "__main__":
