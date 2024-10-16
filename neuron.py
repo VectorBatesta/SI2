@@ -1,4 +1,5 @@
 from methods import *
+import numpy as np
 
 
 
@@ -18,19 +19,77 @@ class Neuron:
         return self.y
 
 
-if __name__ == "__main__":
-    tamEntradas = 5
-    array_entradas = [1] + [random_gen(-.5, .5) for _ in range(1, tamEntradas)]
-    array_pesos = [random_gen(-0.5, 0.5) for _ in range(0, tamEntradas)]
 
-    print(array_entradas)
-    print(array_pesos)
+def updatePesos(array_pesos: list, n, classe_esperada, classe_recebida, vetor_resolucao):
+    array_pesos = np.array(array_pesos)
+    vetor_resolucao = np.array(vetor_resolucao)
+
+    print("\nupdating pesos:")
+    print(f"\tpesos novos = {array_pesos} + {n} * ({classe_esperada} - {classe_recebida}) * {vetor_resolucao}")
+    print(f"\tpesos novos = {array_pesos} + {n * (classe_esperada - classe_recebida) * vetor_resolucao}")
+    array_pesos = array_pesos + (n * (classe_esperada - classe_recebida) * vetor_resolucao) 
+
+    print("\tpesos novos =", array_pesos)
+    return array_pesos
+
+
+
+
+
+
+if __name__ == "__main__":
+    bias = -1
+    array_entradas = [
+        {
+            'array': [2, 2],
+            'classe_esperada': 1
+        },
+        {
+            'array': [4, 4],
+            'classe_esperada': 0
+        }
+    ]
+    array_pesos = [-0.5441, 0.5562, 0.4074]
+    n = 0.1
+
+
+
+
 
     neuronium = Neuron()
-    neuronium.somaValores(array_entradas, array_pesos)
 
-    print(neuronium.valor, neuronium.phi())
-    
-    # tamNeurons = 5
-    # array_neurons_inicial = [Neuron() for _ in range(tamNeurons)]
-    
+    epoca = 0
+    repetir = True
+    while repetir:
+        repetir = False
+        epoca += 1
+
+        print(f"\n\n\nepoca: {epoca}")
+        for entrada in array_entradas:
+            neuronium.somaValores(entrada['array'], array_pesos)
+            classe_esperada = entrada['classe_esperada']
+            classe_recebida = neuronium.phi()
+
+            print("\nsoma entradas calculada: ", str(neuronium.valor))
+
+            if classe_recebida != classe_esperada:
+                print("classe_recebida != classe_esperada:", classe_recebida, classe_esperada)
+                array_pesos = updatePesos(array_pesos, n, classe_esperada, classe_recebida, [bias] + entrada['array'])
+
+                repetir = True
+            else:
+                print("classe_recebida == classe_esperada:", classe_recebida, classe_esperada)
+
+            print("==========[pressione enter]==========")
+            input()
+
+
+    print("""
+        ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░ 
+        ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░ 
+        ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░ 
+        ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░ ░▒▓█▓▒░ 
+        ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░ 
+        ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░              
+        ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░""")
+    print(f"pesos = {array_pesos}, epoca = {epoca}")
