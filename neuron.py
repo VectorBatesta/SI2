@@ -38,8 +38,11 @@ def updatePesos(array_pesos: list, n, classe_esperada, classe_recebida, vetor_re
 
 
 if __name__ == "__main__":
-    bias = -1
-    array_entradas = [
+    bias = 1
+    n = 0.1
+
+    # dataset e pequeno
+    datasetEpequeno = [
         {
             'array': [2, 2],
             'classe_esperada': 1
@@ -49,18 +52,70 @@ if __name__ == "__main__":
             'classe_esperada': 0
         }
     ]
-    array_pesos = [-0.5441, 0.5562, 0.4074]
-    n = 0.1
+
+    # dataset or
+    datasetOr = [
+        {
+            'array': [0, 0],
+            'classe_esperada': 0
+        },
+        {
+            'array': [0, 1],
+            'classe_esperada': 1
+        },
+        {
+            'array': [1, 0],
+            'classe_esperada': 1
+        },
+        {
+            'array': [1, 1],
+            'classe_esperada': 1
+        }
+    ]
+
+    datasetXor = [
+        {
+            'array': [0, 0],
+            'classe_esperada': 1
+        },
+        {
+            'array': [0, 1],
+            'classe_esperada': 0
+        },
+        {
+            'array': [1, 0],
+            'classe_esperada': 0
+        },
+        {
+            'array': [1, 1],
+            'classe_esperada': 1
+        }
+    ]
 
 
 
 
+
+
+
+    #mudar numero da seleção para qual precisar
+    selecao = datasetXor
+
+
+
+
+    array_entradas = selecao
+
+    array_pesos = [0 for _ in range(len(selecao[0]['array']) + 1)] 
+    for i in range(len(selecao[0]['array']) + 1):
+        array_pesos[i] = random_gen()
 
     neuronium = Neuron()
 
+    maxIter = 10000
     epoca = 0
     repetir = True
-    while repetir:
+    while repetir and epoca < maxIter:
         repetir = False
         epoca += 1
 
@@ -81,7 +136,7 @@ if __name__ == "__main__":
                 print("classe_recebida == classe_esperada:", classe_recebida, classe_esperada)
 
             print("==========[pressione enter]==========")
-            input()
+            # input()
 
 
     print("""
