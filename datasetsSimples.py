@@ -33,18 +33,18 @@ datasetOr = [
 datasetXor = [
     {
         'array': [0, 0],
-        'classe_esperada': 1
+        'classe_esperada': 0
     },
     {
         'array': [0, 1],
-        'classe_esperada': 0
+        'classe_esperada': 1
     },
     {
         'array': [1, 0],
-        'classe_esperada': 0
+        'classe_esperada': 1
     },
     {
         'array': [1, 1],
-        'classe_esperada': 1
+        'classe_esperada': 0
     }
 ]

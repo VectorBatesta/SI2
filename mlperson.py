@@ -78,7 +78,7 @@ def MLPTrain(dataset, modelo, epocas, taxaAprendizagem, tolerancia):
     copia_comeco_pesos = (modelo["Wh"].copy(), modelo["Wo"].copy())
     bias = 1
 
-
+    count_epocas = 0
     for epoca in range(epocas):
         epochError = 0
         for exemplo in dataset:
@@ -107,9 +107,10 @@ def MLPTrain(dataset, modelo, epocas, taxaAprendizagem, tolerancia):
 
         errosEpocas.append(epochError)
         if epochError < tolerancia:
+            count_epocas = epoca
             break
 
-    return errosEpocas, copia_comeco_pesos, modelo
+    return errosEpocas, copia_comeco_pesos, modelo, count_epocas
 
 
 
@@ -139,12 +140,8 @@ if __name__ == "__main__":
 
     #mudar numero da seleção para qual precisar
     ##############################################
-    dataset = datasetOr
+    dataset = datasetXor
     ##############################################
-
-    # printaDataset(dataset)
-    print("==========[pressione enter]==========")
-    input()
 
 
 
@@ -159,7 +156,7 @@ if __name__ == "__main__":
     taxaAprendizagem = 0.1
     tolerancia = 0.01
 
-    errosEpocas, copia_comeco_pesos, modelo_final = MLPTrain(dataset, model, maxEpocas, taxaAprendizagem, tolerancia)
+    errosEpocas, copia_comeco_pesos, modelo_final, count_epocas = MLPTrain(dataset, model, maxEpocas, taxaAprendizagem, tolerancia)
 
     print("""
         ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓███████▓▒░░▒▓████████▓▒░▒▓█▓▒░ 
@@ -169,4 +166,68 @@ if __name__ == "__main__":
         ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░ 
         ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░              
         ░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓████████▓▒░▒▓█▓▒░""")
-    print(f"Initial weights = {copia_comeco_pesos}\nFinal weights = {modelo_final}\nEpochs = {maxEpocas}, Learning rate = {taxaAprendizagem}, Bias = {bias}\nDataset = {dataset}")
+
+
+
+
+
+
+
+
+
+    #peguei do chat gebitoca
+    def format_weights(weights):
+        """
+        Formats the weight matrices for better readability.
+        """
+        if isinstance(weights, list):
+            return "[" + ", ".join(format_weights(w) for w in weights) + "]"
+        elif isinstance(weights, dict):
+            return "{" + ", ".join(f"{k}: {format_weights(v)}" for k, v in weights.items()) + "}"
+        elif isinstance(weights, float):
+            return f"{weights:.2f}"  # Format floats to two decimal places
+        else:
+            return str(weights)
+
+        
+    #peguei do chat gebitoca tbm
+    def format_dataset(dataset):
+        formatted = []
+        for item in dataset:
+            array_str = ", ".join(map(str, item['array']))
+            formatted.append(f"Array: [{array_str}] | Expected Class: {item['classe_esperada']}")
+        return "\n".join(formatted)
+    
+    #mais um do chat gebitoca... when will it ever end???
+    def convert_to_float(data):
+        """
+        Recursively converts all numpy float64 elements in the data structure
+        to standard Python float.
+        """
+        if isinstance(data, list):
+            return [convert_to_float(item) for item in data]
+        elif isinstance(data, dict):
+            return {key: convert_to_float(value) for key, value in data.items()}
+        elif isinstance(data, (np.float64, np.float32, float)):  # Cover all float cases
+            return float(data)
+        else:
+            return data  # Return as-is for unsupported types
+
+
+
+
+
+
+    initial_weights = convert_to_float(copia_comeco_pesos)
+    final_weights = convert_to_float(modelo_final)
+
+    initial_weights_formatted = format_weights(initial_weights)
+    final_weights_formatted = format_weights(final_weights)
+    dataset_formatted = format_dataset(dataset)
+
+    print(f"\nInitial weights = {initial_weights_formatted}\n")
+    print(f"Final weights = {final_weights_formatted}\n")
+    print(f"Max Epochs = {maxEpocas}, Epochs used = {count_epocas}, Learning rate = {taxaAprendizagem}, Bias = {bias}\n")
+    print("Dataset:\n" + dataset_formatted)
+
+    # print(f"Initial weights = {copia_comeco_pesos}\nFinal weights = {modelo_final}\nEpochs = {maxEpocas}, Learning rate = {taxaAprendizagem}, Bias = {bias}\nDataset = {dataset}")
